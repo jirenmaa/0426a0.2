@@ -89,8 +89,6 @@ function updateShape(index) {
 
   mesh.geometry.dispose();
   mesh.geometry = shapes[currentIndex].geo;
-
-  console.log("Now Showing:", shapes[currentIndex].name);
 }
 
 let powerOn = true;
@@ -126,7 +124,6 @@ document.querySelector("#btn-down").addEventListener("click", () => {
 
 document.querySelector("#btn-aft").addEventListener("click", () => {
   if (!powerOn) return;
-  console.log("btn aft")
   const content = document.querySelector(".content");
   content.classList.toggle("hidden");
 })
