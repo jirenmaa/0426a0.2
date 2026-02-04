@@ -6,30 +6,130 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 
 const container = document.getElementById("app");
 
-const scene = new THREE.Scene();
-
 let width = container.clientWidth || 600;
 let height = container.clientHeight || 450;
 
-const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  container.clientWidth / container.clientHeight,
+  0.1,
+  1000,
+);
+
+camera.position.z = 3;
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
   alpha: true,
 });
 
-renderer.setSize(width, height);
+renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
   wireframe: true,
 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-camera.position.z = 3;
+
+const shapes = [
+  {
+    name: "Prism",
+    geo: new THREE.CylinderGeometry(0.8, 0.8, 2, 6),
+  },
+  {
+    name: "Triangular Prism",
+    geo: new THREE.CylinderGeometry(0.8, 0.8, 1.5, 3),
+  },
+  {
+    name: "-",
+    geo: new THREE.TorusGeometry(10, 4, 10, 30),
+  },
+  {
+    name: "Cone",
+    geo: new THREE.ConeGeometry(0.9, 1.6, 10),
+  },
+  {
+    name: "Diamond",
+    geo: new THREE.OctahedronGeometry(1.2),
+  },
+
+  {
+    name: "-",
+    geo: new THREE.IcosahedronGeometry(3, 2),
+  },
+  {
+    name: "Icosahedron (Spiky)",
+    geo: new THREE.IcosahedronGeometry(1, 0),
+  },
+  {
+    name: "Octahedron (Sharp Points)",
+    geo: new THREE.OctahedronGeometry(1),
+  },
+  {
+    name: "Star Crystal",
+    geo: new THREE.DodecahedronGeometry(1),
+  },
+  {
+    name: "Tetrahedron (Extreme Points)",
+    geo: new THREE.TetrahedronGeometry(1),
+  },
+];
+
+// Mesh (Single Object, Swap Geometry)
+let currentIndex = 0;
+
+const mesh = new THREE.Mesh(shapes[currentIndex].geo, material);
+scene.add(mesh);
+
+function updateShape(index) {
+  currentIndex = (index + shapes.length) % shapes.length;
+
+  mesh.geometry.dispose();
+  mesh.geometry = shapes[currentIndex].geo;
+
+  console.log("Now Showing:", shapes[currentIndex].name);
+}
+
+let powerOn = true;
+
+function togglePower() {
+  powerOn = !powerOn;
+
+  const overlay = document.querySelector(".crt-overlay");
+
+  if (!powerOn) {
+    overlay.style.opacity = "1";
+    overlay.style.background = "black";
+  } else {
+    overlay.style.opacity = "0.15";
+    overlay.style.background = "";
+  }
+}
+
+// Button Controls (PWR, CH+, CH-)
+document.querySelector("#btn-power").addEventListener("click", () => {
+  togglePower();
+});
+
+document.querySelector("#btn-up").addEventListener("click", () => {
+  if (!powerOn) return;
+  updateShape(currentIndex + 1);
+});
+
+document.querySelector("#btn-down").addEventListener("click", () => {
+  if (!powerOn) return;
+  updateShape(currentIndex - 1);
+});
+
+document.querySelector("#btn-aft").addEventListener("click", () => {
+  if (!powerOn) return;
+  console.log("btn aft")
+  const content = document.querySelector(".content");
+  content.classList.toggle("hidden");
+})
 
 const CRTShader = {
   uniforms: {
@@ -82,34 +182,34 @@ composer.addPass(new RenderPass(scene, camera));
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(container.clientWidth, container.clientHeight),
-  1.5, // Strength
-  0.4, // Radius
-  0.1, // Threshold
+  5.0, // Strength
+  0.1, // Radius
+  0.5, // Threshold
 );
 composer.addPass(bloomPass);
 
 const crtPass = new ShaderPass(CRTShader);
 composer.addPass(crtPass);
 
-function animate(time) {
+function animate() {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  if (!powerOn) return;
 
-  crtPass.uniforms.uTime.value = time * 0.001;
+  mesh.rotation.x += 0.01;
+  mesh.rotation.y += 0.01;
 
   composer.render();
 }
+
 animate();
 
 window.addEventListener("resize", () => {
-  const newWidth = container.clientWidth;
-  const newHeight = container.clientHeight;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
 
-  camera.aspect = newWidth / newHeight;
+  camera.aspect = w / h;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(newWidth, newHeight);
-  composer.setSize(newWidth, newHeight);
+  renderer.setSize(w, h);
 });

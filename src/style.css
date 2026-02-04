@@ -20,6 +20,12 @@ body {
   font-family: "Courier New", Courier, monospace;
 }
 
+.hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
 .monitor {
   background: var(--case-color);
   padding: 30px 60px 30px 30px;
@@ -52,6 +58,7 @@ body {
 
 .crt-overlay {
   position: absolute;
+  inset: 0;
   top: 0;
   left: 0;
   width: 100%;
@@ -94,6 +101,8 @@ body {
   text-shadow: 0 0 5px var(--crt-green);
   pointer-events: none;
   padding: 40px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .controls {
