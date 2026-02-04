@@ -1,0 +1,122 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: white;
+}
+
+:root {
+  --crt-green: #1fff1f;
+  --case-color: #2c2c2c;
+}
+
+body {
+  background-color: #000;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.monitor {
+  background: var(--case-color);
+  padding: 30px 60px 30px 30px;
+  border-radius: 20px;
+  position: relative;
+  box-shadow:
+    inset 0 2px 10px rgba(255, 255, 255, 0.2),
+    0 20px 50px rgba(0, 0, 0, 0.8);
+  display: flex;
+}
+
+.screen {
+  width: 600px;
+  height: 450px;
+  background: #000;
+  border-radius: 5%;
+  position: relative;
+  overflow: hidden;
+  border: 15px solid #1a1a1a;
+}
+
+#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.crt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+  background-size:
+    100% 3px,
+    3px 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.crt-overlay::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(18, 16, 16, 0) 0%,
+    rgba(18, 16, 16, 0.4) 100%
+  );
+  z-index: 3;
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  color: var(--crt-green);
+  text-shadow: 0 0 5px var(--crt-green);
+  pointer-events: none;
+  padding: 40px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  margin-left: 20px;
+}
+
+.btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111;
+  border: 2px solid #444;
+  color: #666;
+  font-size: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #000;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #000;
+}
